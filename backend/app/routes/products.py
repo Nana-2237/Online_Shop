@@ -49,3 +49,18 @@ def put_product_by_id( id: int, product_data: ProductCreate, db: Session = Depen
     db.refresh(product)
 
     return product
+
+@router.delete("/{id}", response_model=ProductResponse)
+def delete_item(id: int, db: Session = Depends(get_db)):
+    product = db.query(Product).filter(Product.id == id).first()
+
+    if product is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Product not found"
+        )
+
+    db.delete(product)
+    db.commit()
+
+    return product

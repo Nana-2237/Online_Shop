@@ -1,16 +1,16 @@
 from fastapi import FastAPI
-from sqlalchemy import text
 
-from app.database import Base, engine
-from app import models
+from app.database import create_tables
 from app.routes import products
+from app.routes import auth as auth_router
 
 
-Base.metadata.create_all(bind=engine)
+create_tables()
 
 app = FastAPI(title="Gaming Shop API")
 
 app.include_router(products.router)
+app.include_router(auth_router.router)
 
 
 @app.get("/health")
