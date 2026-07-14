@@ -52,3 +52,61 @@ class ProductResponse(ProductBase):
 
     class Config:
         from_attributes = True
+
+
+class CartItemBase(BaseModel):
+    product_id: int
+    quantity: int = 1
+
+
+class CartItemCreate(CartItemBase):
+    pass
+
+
+class CartItemUpdate(BaseModel):
+    quantity: int
+
+
+class CartItemResponse(BaseModel):
+    id: int
+    cart_id: int
+    product_id: int
+    quantity: int
+    product: Optional[ProductResponse] = None
+
+    class Config:
+        from_attributes = True
+
+
+class CartResponse(BaseModel):
+    id: int
+    user_id: int
+    items: list[CartItemResponse]
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class OrderItemResponse(BaseModel):
+    id: int
+    order_id: int
+    product_id: int
+    quantity: int
+    unit_price: float
+    product: Optional[ProductResponse] = None
+
+    class Config:
+        from_attributes = True
+
+
+class OrderResponse(BaseModel):
+    id: int
+    user_id: int
+    total: float
+    status: str
+    created_at: datetime
+    items: list[OrderItemResponse]
+
+    class Config:
+        from_attributes = True
