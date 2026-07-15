@@ -1,10 +1,16 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
-import { ShoppingCart, Package, User, LogOut, LogIn } from 'lucide-react'
+import { ShoppingCart, Package, User, LogOut, LogIn, Shield } from 'lucide-react'
 
 export default function Navbar() {
   const { token, user, logout } = useAuth()
   const navigate = useNavigate()
+  const linkClass = ({ isActive }) =>
+    `px-3 py-2 rounded-md flex items-center gap-1 transition ${
+      isActive
+        ? 'bg-blue-50 text-blue-700 shadow-sm ring-1 ring-blue-100'
+        : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+    }`
 
   const handleLogout = () => {
     logout()
@@ -21,17 +27,22 @@ export default function Navbar() {
             </Link>
           </div>
           <div className="flex items-center space-x-6">
-            <Link to="/products" className="text-gray-700 hover:text-blue-600 flex items-center gap-1">
+            <NavLink to="/products" className={linkClass}>
               <Package size={18} /> Products
-            </Link>
+            </NavLink>
             {token && (
               <>
-                <Link to="/cart" className="text-gray-700 hover:text-blue-600 flex items-center gap-1">
+                <NavLink to="/cart" className={linkClass}>
                   <ShoppingCart size={18} /> Cart
-                </Link>
-                <Link to="/orders" className="text-gray-700 hover:text-blue-600 flex items-center gap-1">
+                </NavLink>
+                <NavLink to="/orders" className={linkClass}>
                   <User size={18} /> Orders
-                </Link>
+                </NavLink>
+                {user?.is_admin && (
+                  <NavLink to="/admin/products" className={linkClass}>
+                    <Shield size={18} /> Admin
+                  </NavLink>
+                )}
                 <span className="text-sm text-gray-500">{user?.email}</span>
                 <button
                   onClick={handleLogout}
@@ -42,9 +53,9 @@ export default function Navbar() {
               </>
             )}
             {!token && (
-              <Link to="/login" className="text-gray-700 hover:text-blue-600 flex items-center gap-1">
+              <NavLink to="/login" className={linkClass}>
                 <LogIn size={18} /> Login
-              </Link>
+              </NavLink>
             )}
           </div>
         </div>

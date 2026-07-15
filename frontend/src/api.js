@@ -23,6 +23,23 @@ export const api = {
   },
   products: {
     list: () => fetch(`${API_BASE}/products/`),
+    create: (token, data) =>
+      fetch(`${API_BASE}/products/`, {
+        method: 'POST',
+        headers: { ...authHeaders(token), 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }),
+    update: (token, id, data) =>
+      fetch(`${API_BASE}/products/${id}`, {
+        method: 'PUT',
+        headers: { ...authHeaders(token), 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }),
+    remove: (token, id) =>
+      fetch(`${API_BASE}/products/${id}`, {
+        method: 'DELETE',
+        headers: authHeaders(token),
+      }),
   },
   cart: {
     get: (token) => fetch(`${API_BASE}/cart/items`, { headers: authHeaders(token) }),

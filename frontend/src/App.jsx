@@ -6,6 +6,7 @@ import Register from './pages/Register.jsx'
 import Products from './pages/Products.jsx'
 import Cart from './pages/Cart.jsx'
 import Orders from './pages/Orders.jsx'
+import AdminProducts from './pages/AdminProducts.jsx'
 
 function Layout() {
   return (
@@ -23,6 +24,12 @@ function PrivateRoute({ children }) {
   return token ? children : <Navigate to="/login" replace />
 }
 
+function AdminRoute({ children }) {
+  const { token, user } = useAuth()
+  if (!token) return <Navigate to="/login" replace />
+  return user?.is_admin ? children : <Navigate to="/products" replace />
+}
+
 function App() {
   return (
     <Routes>
@@ -33,6 +40,7 @@ function App() {
         <Route path="register" element={<Register />} />
         <Route path="cart" element={<PrivateRoute><Cart /></PrivateRoute>} />
         <Route path="orders" element={<PrivateRoute><Orders /></PrivateRoute>} />
+        <Route path="admin/products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
       </Route>
     </Routes>
   )

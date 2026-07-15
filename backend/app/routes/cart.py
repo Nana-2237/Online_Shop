@@ -74,7 +74,12 @@ def get_cart_items(
         cart = Cart(user_id=current_user.id)
         db.add(cart)
         db.commit()
-        db.refresh(cart)
+        cart = (
+            db.query(Cart)
+            .options(joinedload(Cart.items).joinedload(CartItem.product))
+            .filter(Cart.user_id == current_user.id)
+            .first()
+        )
 
     return cart
 

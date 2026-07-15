@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from app.auth import get_current_active_user
 from app.database import get_db
@@ -52,7 +52,12 @@ def create_order(
 
     db.add(order)
     db.commit()
-    db.refresh(order)
+    order = (
+        db.query(Order)
+        .options(joinedload(Order.items).joinedload(OrderItem.product))
+        .filter(Order.id == order.id)
+        .first()
+    )
 
     if cart:
         for item in cart.items:
@@ -67,7 +72,12 @@ def get_orders(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
-    orders = db.query(Order).filter(Order.user_id == current_user.id).all()
+    orders = (
+        db.query(Order)
+        .options(joinedload(Order.items).joinedload(OrderItem.product))
+        .filter(Order.user_id == current_user.id)
+        .all()
+    )
     return orders
 
 
@@ -77,7 +87,12 @@ def get_order(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
-    order = db.query(Order).filter(Order.id == order_id, Order.user_id == current_user.id).first()
+    order = (
+        db.query(Order)
+        .options(joinedload(Order.items).joinedload(OrderItem.product))
+        .filter(Order.id == order_id, Order.user_id == current_user.id)
+        .first()
+    )
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
 

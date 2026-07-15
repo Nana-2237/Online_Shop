@@ -1,14 +1,19 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app.auth import get_current_admin_user
 from app.database import get_db
-from app.models import Product
+from app.models import Product, User
 from app.schemas import ProductCreate, ProductResponse
 
 router=APIRouter(prefix="/products", tags= ["Products"])
 
 @router.post("/",response_model=ProductResponse)
-def create_product(product: ProductCreate, db: Session = Depends(get_db)):
+def create_product(
+    product: ProductCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin_user),
+):
     new_product = Product(**product.model_dump())
 
     db.add(new_product)
@@ -32,7 +37,12 @@ def get_product_by_id(id: int, db: Session = Depends(get_db)):
     return product
 
 @router.put("/{id}", response_model=ProductResponse)
-def put_product_by_id( id: int, product_data: ProductCreate, db: Session = Depends(get_db)):
+def put_product_by_id(
+    id: int,
+    product_data: ProductCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin_user),
+):
     product = db.query(Product).filter(Product.id == id).first()
 
     if product is None:
@@ -51,7 +61,11 @@ def put_product_by_id( id: int, product_data: ProductCreate, db: Session = Depen
     return product
 
 @router.delete("/{id}", response_model=ProductResponse)
-def delete_item(id: int, db: Session = Depends(get_db)):
+def delete_item(
+    id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin_user),
+):
     product = db.query(Product).filter(Product.id == id).first()
 
     if product is None:
