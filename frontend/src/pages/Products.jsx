@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 import { api } from '../api.js'
 import { useAuth } from '../context/AuthContext.jsx'
-import { ShoppingCart, AlertCircle } from 'lucide-react'
+import { ShoppingCart, AlertCircle, CheckCircle } from 'lucide-react'
 
 export default function Products() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [message, setMessage] = useState('')
+  const [toast, setToast] = useState(null)
   const { token } = useAuth()
 
   useEffect(() => {
@@ -20,20 +20,23 @@ export default function Products() {
       .finally(() => setLoading(false))
   }, [])
 
-  const addToCart = async (productId) => {
+  const showToast = (text, type = 'success') => {
+    setToast({ text, type })
+    setTimeout(() => setToast(null), 2500)
+  }
+
+  const addToCart = async (product) => {
     if (!token) {
-      setMessage('Please login to add items to cart')
-      setTimeout(() => setMessage(''), 3000)
+      showToast('Please login to add items to cart', 'error')
       return
     }
     try {
-      const res = await api.cart.add(token, { product_id: productId, quantity: 1 })
-      if (res.ok) setMessage('Added to cart')
-      else setMessage('Failed to add to cart')
+      const res = await api.cart.add(token, { product_id: product.id, quantity: 1 })
+      if (res.ok) showToast(`${product.name} added to cart`)
+      else showToast('Failed to add to cart', 'error')
     } catch {
-      setMessage('Failed to add to cart')
+      showToast('Failed to add to cart', 'error')
     }
-    setTimeout(() => setMessage(''), 3000)
   }
 
   if (loading) return <div className="text-center py-10">Loading...</div>
@@ -42,9 +45,10 @@ export default function Products() {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">Products</h1>
-      {message && (
-        <div className="mb-4 bg-blue-100 text-blue-700 p-3 rounded flex items-center gap-2">
-          <AlertCircle size={18} /> {message}
+      {toast && (
+        <div className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg ${toast.type === 'error' ? 'bg-red-600 text-white' : 'bg-green-600 text-white'}`}>
+          {toast.type === 'error' ? <AlertCircle size={20} /> : <CheckCircle size={20} />}
+          <span className="font-medium">{toast.text}</span>
         </div>
       )}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -61,7 +65,7 @@ export default function Products() {
             <div className="flex items-center justify-between mt-auto">
               <span className="text-xl font-bold text-blue-600">${product.price.toFixed(2)}</span>
               <button
-                onClick={() => addToCart(product.id)}
+                onClick={() => addToCart(product)}
                 className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2"
               >
                 <ShoppingCart size={18} /> Add

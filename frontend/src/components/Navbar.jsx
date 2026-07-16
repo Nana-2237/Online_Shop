@@ -1,6 +1,6 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
-import { ShoppingCart, Package, User, LogOut, LogIn, Shield } from 'lucide-react'
+import { ShoppingCart, Package, User, LogOut, LogIn, Shield, Home } from 'lucide-react'
 
 export default function Navbar() {
   const { token, user, logout } = useAuth()
@@ -22,11 +22,14 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link to="/products" className="text-xl font-bold text-blue-600">
+            <Link to="/" className="text-xl font-bold text-blue-600">
               Gaming Shop
             </Link>
           </div>
           <div className="flex items-center space-x-6">
+            <NavLink to="/" end className={linkClass}>
+              <Home size={18} /> Home
+            </NavLink>
             <NavLink to="/products" className={linkClass}>
               <Package size={18} /> Products
             </NavLink>
