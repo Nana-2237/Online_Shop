@@ -31,3 +31,7 @@ app.include_router(admin_users.router)
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
+    
+@app.get("/health2")
+def health_check2():
+    return {"status": "okok"}
