@@ -25,6 +25,22 @@ class UserResponse(BaseModel):
         from_attributes = True
 
 
+class AdminUserCreate(BaseModel):
+    email: EmailStr
+    full_name: str
+    password: str
+    is_active: bool = True
+    is_admin: bool = False
+
+
+class AdminUserUpdate(BaseModel):
+    email: Optional[EmailStr] = None
+    full_name: Optional[str] = None
+    password: Optional[str] = None
+    is_active: Optional[bool] = None
+    is_admin: Optional[bool] = None
+
+
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"

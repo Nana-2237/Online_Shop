@@ -8,6 +8,7 @@ import Products from './pages/Products.jsx'
 import Cart from './pages/Cart.jsx'
 import Orders from './pages/Orders.jsx'
 import AdminProducts from './pages/AdminProducts.jsx'
+import AdminUsers from './pages/AdminUsers.jsx'
 
 function Layout() {
   return (
@@ -42,6 +43,7 @@ function App() {
         <Route path="cart" element={<PrivateRoute><Cart /></PrivateRoute>} />
         <Route path="orders" element={<PrivateRoute><Orders /></PrivateRoute>} />
         <Route path="admin/products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
+        <Route path="admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
       </Route>
     </Routes>
   )

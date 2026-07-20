@@ -70,4 +70,24 @@ export const api = {
     list: (token) => fetch(`${API_BASE}/orders/`, { headers: authHeaders(token) }),
     get: (token, id) => fetch(`${API_BASE}/orders/${id}`, { headers: authHeaders(token) }),
   },
+  adminUsers: {
+    list: (token) => fetch(`${API_BASE}/admin/users/`, { headers: authHeaders(token) }),
+    create: (token, data) =>
+      fetch(`${API_BASE}/admin/users/`, {
+        method: 'POST',
+        headers: { ...authHeaders(token), 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }),
+    update: (token, id, data) =>
+      fetch(`${API_BASE}/admin/users/${id}`, {
+        method: 'PUT',
+        headers: { ...authHeaders(token), 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }),
+    remove: (token, id) =>
+      fetch(`${API_BASE}/admin/users/${id}`, {
+        method: 'DELETE',
+        headers: authHeaders(token),
+      }),
+  },
 }

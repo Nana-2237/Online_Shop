@@ -1,6 +1,6 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
-import { ShoppingCart, Package, User, LogOut, LogIn, Shield, Home } from 'lucide-react'
+import { ShoppingCart, Package, User, LogOut, LogIn, Shield, Home, Users } from 'lucide-react'
 
 export default function Navbar() {
   const { token, user, logout } = useAuth()
@@ -42,9 +42,14 @@ export default function Navbar() {
                   <User size={18} /> Orders
                 </NavLink>
                 {user?.is_admin && (
-                  <NavLink to="/admin/products" className={linkClass}>
-                    <Shield size={18} /> Admin
-                  </NavLink>
+                  <>
+                    <NavLink to="/admin/products" className={linkClass}>
+                      <Shield size={18} /> Admin Products
+                    </NavLink>
+                    <NavLink to="/admin/users" className={linkClass}>
+                      <Users size={18} /> Accounts
+                    </NavLink>
+                  </>
                 )}
                 <span className="text-sm text-gray-500">{user?.email}</span>
                 <button
