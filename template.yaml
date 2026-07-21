@@ -1,0 +1,1477 @@
+---
+Metadata:
+  AWSToolsMetrics:
+    IaC_Generator: "arn:aws:cloudformation:eu-north-1:072160582391:generatedTemplate/d2ca7904-0487-44d9-95f6-1d2fc70c4d68"
+Resources:
+  LogsLogStreamEcsMain53fdff3d2e0848ed975cec10dbbf4f30:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Logs::LogStream"
+    DeletionPolicy: "Retain"
+    Properties:
+      LogStreamName: "ecs/Main/53fdff3d2e0848ed975cec10dbbf4f30"
+      LogGroupName: "/aws/ecs/default/gaming-shop-backend-fc59"
+  IAMRoleAWSServiceRoleForElasticLoadBalancing:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/aws-service-role/elasticloadbalancing.amazonaws.com/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/aws-service-role/AWSElasticLoadBalancingServiceRolePolicy"
+      MaxSessionDuration: 3600
+      RoleName: "AWSServiceRoleForElasticLoadBalancing"
+      Description: "Allows ELB to call AWS services on your behalf."
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "elasticloadbalancing.amazonaws.com"
+  IAMRoleEcsTaskExecutionRole:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/service-role/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+      MaxSessionDuration: 3600
+      RoleName: "ecsTaskExecutionRole"
+      Description: "Allows access to other AWS service resources that are required\
+        \ to run Amazon ECS tasks."
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Condition:
+            StringEquals:
+              aws:SourceAccount: "072160582391"
+            ArnEquals:
+              aws:SourceArn: "arn:aws:ecs:*:072160582391:*"
+          Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "ecs-tasks.amazonaws.com"
+  IAMRoleRdsmonitoringrole:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
+      MaxSessionDuration: 3600
+      RoleName: "rds-monitoring-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "monitoring.rds.amazonaws.com"
+          Sid: ""
+  AmplifyBranchAppsd32y7yd4lys91ubranchesmain:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Amplify::Branch"
+    DeletionPolicy: "Retain"
+    Properties:
+      Backend: {}
+      AppId: "d32y7yd4lys91u"
+      EnablePullRequestPreview: false
+      EnableAutoBuild: true
+      EnablePerformanceMode: false
+      Stage: "PRODUCTION"
+      BranchName: "main"
+      Framework: "Web"
+  LogsLogGroupawsecsdefaultgamingshopbackendfc59:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Logs::LogGroup"
+    DeletionPolicy: "Retain"
+    Properties:
+      FieldIndexPolicies: []
+      BearerTokenAuthenticationEnabled: false
+      LogGroupClass: "STANDARD"
+      LogGroupName: "/aws/ecs/default/gaming-shop-backend-fc59"
+      DeletionProtectionEnabled: false
+      Tags:
+      - Value: "true"
+        Key: "AmazonECSManaged"
+      DataProtectionPolicy: {}
+  ECSClusterDefault:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ECS::Cluster"
+    DeletionPolicy: "Retain"
+    Properties:
+      CapacityProviders: []
+      ClusterName: "default"
+      ClusterSettings:
+      - Value: "disabled"
+        Name: "containerInsights"
+      DefaultCapacityProviderStrategy: []
+      Tags: []
+  IAMRoleAWSServiceRoleForApplicationAutoScalingECSService:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/aws-service-role/ecs.application-autoscaling.amazonaws.com/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/aws-service-role/AWSApplicationAutoscalingECSServicePolicy"
+      MaxSessionDuration: 3600
+      RoleName: "AWSServiceRoleForApplicationAutoScaling_ECSService"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "ecs.application-autoscaling.amazonaws.com"
+  IAMRoleGitHubActionsECSDeployRole:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/"
+      MaxSessionDuration: 3600
+      RoleName: "GitHubActionsECSDeployRole"
+      Description: "name"
+      Policies:
+      - PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Resource: "*"
+            Action:
+            - "ecr:GetAuthorizationToken"
+            Effect: "Allow"
+            Sid: "ECRLogin"
+          - Resource: "arn:aws:ecr:eu-north-1:072160582391:repository/gaming-shop-backend"
+            Action:
+            - "ecr:BatchCheckLayerAvailability"
+            - "ecr:GetDownloadUrlForLayer"
+            - "ecr:BatchGetImage"
+            - "ecr:CompleteLayerUpload"
+            - "ecr:InitiateLayerUpload"
+            - "ecr:PutImage"
+            - "ecr:UploadLayerPart"
+            Effect: "Allow"
+            Sid: "PushImageToECR"
+          - Resource: "*"
+            Action:
+            - "ecs:DescribeTaskDefinition"
+            - "ecs:RegisterTaskDefinition"
+            Effect: "Allow"
+            Sid: "ReadAndRegisterTaskDefinition"
+          - Resource: "arn:aws:ecs:eu-north-1:072160582391:service/default/gaming-shop-backend"
+            Action:
+            - "ecs:DescribeServices"
+            - "ecs:UpdateService"
+            Effect: "Allow"
+            Sid: "DeployECSService"
+          - Condition:
+              StringEquals:
+                iam:PassedToService: "ecs-tasks.amazonaws.com"
+            Resource: "arn:aws:iam::072160582391:role/service-role/ecsTaskExecutionRole"
+            Action:
+            - "iam:PassRole"
+            Effect: "Allow"
+            Sid: "PassECSTaskExecutionRole"
+        PolicyName: "GitHubActionsECSDeployPolicy"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Condition:
+            StringEquals:
+              token.actions.githubusercontent.com:aud: "sts.amazonaws.com"
+            StringLike:
+              token.actions.githubusercontent.com:sub:
+              - "repo:Nana-2237/Online_Shop:ref:refs/heads/main"
+              - "repo:Nana-2237/Online_Shop:ref:refs/heads/main"
+          Action: "sts:AssumeRoleWithWebIdentity"
+          Effect: "Allow"
+          Principal:
+            Federated: "arn:aws:iam::072160582391:oidc-provider/token.actions.githubusercontent.com"
+  EC2SecurityGroupUA:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::EC2::SecurityGroup"
+    DeletionPolicy: "Retain"
+    Properties:
+      GroupDescription: "Security group for ECS service: arn:aws:ecs:eu-north-1:072160582391:service/default/gaming-shop-backend"
+      GroupName: "default-gaming-shop-backend-vpc-03600427402e76b5a"
+      VpcId: "vpc-03600427402e76b5a"
+      SecurityGroupIngress:
+      - IpProtocol: "tcp"
+        FromPort: 8000
+        SourceSecurityGroupId: "sg-0d72b03bc024e1b8e"
+        ToPort: 8000
+        SourceSecurityGroupOwnerId: "072160582391"
+      SecurityGroupEgress:
+      - CidrIp: "0.0.0.0/0"
+        IpProtocol: "-1"
+        FromPort: -1
+        ToPort: -1
+      Tags:
+      - Value: "true"
+        Key: "AmazonECSManaged"
+  LogsLogStreamEcsMainac23e07215d940a381b0c5c78d5f4db1:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Logs::LogStream"
+    DeletionPolicy: "Retain"
+    Properties:
+      LogStreamName: "ecs/Main/ac23e07215d940a381b0c5c78d5f4db1"
+      LogGroupName: "/aws/ecs/default/gaming-shop-backend-fc59"
+  LogsLogStreamEcsMain04ea7486c8f94bf78c5b3c04e71ef317:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Logs::LogStream"
+    DeletionPolicy: "Retain"
+    Properties:
+      LogStreamName: "ecs/Main/04ea7486c8f94bf78c5b3c04e71ef317"
+      LogGroupName: "/aws/ecs/default/gaming-shop-backend-fc59"
+  LogsLogStreamEcsMain2b886d55873f4e28af2287aa0f7531cc:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Logs::LogStream"
+    DeletionPolicy: "Retain"
+    Properties:
+      LogStreamName: "ecs/Main/2b886d55873f4e28af2287aa0f7531cc"
+      LogGroupName: "/aws/ecs/default/gaming-shop-backend-fc59"
+  AmplifyAppAppsd32y7yd4lys91u:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Amplify::App"
+    DeletionPolicy: "Retain"
+    Properties:
+      Repository: "https://github.com/Nana-2237/Online_Shop"
+      EnvironmentVariables:
+      - Value: "https://ga-886f897c4ed24663bfebf3d8e49ff499.ecs.eu-north-1.on.aws"
+        Name: "VITE_API_URL"
+      Platform: "WEB"
+      EnableBranchAutoDeletion: false
+      BuildSpec: "version: 1\nfrontend:\n  phases:\n    preBuild:\n      commands:\n\
+        \        - cd frontend\n        - npm ci\n    build:\n      commands:\n  \
+        \      - npm run build\n  artifacts:\n    baseDirectory: frontend/dist\n \
+        \   files:\n      - \"**/*\"\n  cache:\n    paths:\n      - frontend/node_modules/**/*\n"
+      CustomRules:
+      - Status: "404-200"
+        Target: "/index.html"
+        Source: "/<*>"
+      CacheConfig:
+        Type: "AMPLIFY_MANAGED_NO_COOKIES"
+      JobConfig:
+        BuildComputeType: "STANDARD_8GB"
+      CustomHeaders: ""
+      Name: "Online_Shop"
+  EC2SecurityGroupWO:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::EC2::SecurityGroup"
+    DeletionPolicy: "Retain"
+    Properties:
+      GroupDescription: "yes"
+      GroupName: "gaming-shop-ec2-sg"
+      VpcId: "vpc-03600427402e76b5a"
+      SecurityGroupEgress:
+      - CidrIp: "0.0.0.0/0"
+        IpProtocol: "-1"
+        FromPort: -1
+        ToPort: -1
+  EC2Instance:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::EC2::Instance"
+    DeletionPolicy: "Retain"
+    Properties:
+      Tenancy: "default"
+      PrivateIpAddress: "172.31.13.118"
+      MetadataOptions:
+        HttpPutResponseHopLimit: 2
+        HttpProtocolIpv6: "disabled"
+        HttpTokens: "required"
+        InstanceMetadataTags: "disabled"
+        HttpEndpoint: "enabled"
+      InstanceInitiatedShutdownBehavior: "stop"
+      BlockDeviceMappings:
+      - Ebs:
+          SnapshotId: "snap-03706388e10b0deab"
+          VolumeType: "gp3"
+          Iops: 3000
+          VolumeSize: 8
+          Encrypted: false
+          DeleteOnTermination: true
+        DeviceName: "/dev/xvda"
+      PrivateDnsNameOptions:
+        EnableResourceNameDnsARecord: false
+        HostnameType: "ip-name"
+        EnableResourceNameDnsAAAARecord: false
+      SecurityGroupIds:
+      - "sg-082e68d948cdc1125"
+      EbsOptimized: true
+      DisableApiTermination: false
+      SourceDestCheck: true
+      PlacementGroupName: ""
+      NetworkInterfaces:
+      - Ipv6Addresses: []
+        SecondaryPrivateIpAddressCount: 0
+        NetworkInterfaceId: "eni-09cec3b5fce88a43d"
+        DeviceIndex: "0"
+      ImageId: "ami-068b5bc67e48209c1"
+      InstanceType: "t3.micro"
+      Monitoring: false
+      Tags:
+      - Value: "gaming-shop-db-admin"
+        Key: "Name"
+      CreditSpecification:
+        CPUCredits: "unlimited"
+  EC2RouteRY:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::EC2::Route"
+    DeletionPolicy: "Retain"
+    Properties:
+      RouteTableId: "rtb-05d031edcce9523d8"
+      DestinationCidrBlock: "172.31.0.0/16"
+      GatewayId: "local"
+      VpcEndpointId: "local"
+  IAMRoleEcsInfrastructureRoleForExpressServices:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/service-role/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/service-role/AmazonECSInfrastructureRoleforExpressGatewayServices"
+      MaxSessionDuration: 3600
+      RoleName: "ecsInfrastructureRoleForExpressServices"
+      Description: "This role allows Amazon ECS to manage resources associated with\
+        \ Amazon ECS Express services."
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Condition:
+            StringEquals:
+              aws:SourceAccount: "072160582391"
+            ArnEquals:
+              aws:SourceArn: "arn:aws:ecs:*:072160582391:*"
+          Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "ecs.amazonaws.com"
+  EC2Route:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::EC2::Route"
+    DeletionPolicy: "Retain"
+    Properties:
+      RouteTableId: "rtb-05d031edcce9523d8"
+      DestinationCidrBlock: "0.0.0.0/0"
+      GatewayId: "igw-09f091a406b8449cb"
+      VpcEndpointId: "igw-09f091a406b8449cb"
+  IAMRoleAWSServiceRoleForTrustedAdvisor:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/aws-service-role/trustedadvisor.amazonaws.com/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/aws-service-role/AWSTrustedAdvisorServiceRolePolicy"
+      MaxSessionDuration: 3600
+      RoleName: "AWSServiceRoleForTrustedAdvisor"
+      Description: "Access for the AWS Trusted Advisor Service to help reduce cost,\
+        \ increase performance, and improve security of your AWS environment."
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "trustedadvisor.amazonaws.com"
+  LogsLogStreamEcsMain83c1436c158548a2850ae335a1faa594:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Logs::LogStream"
+    DeletionPolicy: "Retain"
+    Properties:
+      LogStreamName: "ecs/Main/83c1436c158548a2850ae335a1faa594"
+      LogGroupName: "/aws/ecs/default/gaming-shop-backend-fc59"
+  ElasticLoadBalancingV2ListenerListenerappecsexpressgatewayalb6b783833b1baf300de25ae67295813a5e8078ba5:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    DeletionPolicy: "Retain"
+    Properties:
+      MutualAuthentication:
+        Mode: "off"
+      ListenerAttributes:
+      - Value: ""
+        Key: "routing.http.request.x_amzn_tls_cipher_suite.header_name"
+      - Value: ""
+        Key: "routing.http.request.x_amzn_mtls_clientcert_serial_number.header_name"
+      - Value: ""
+        Key: "routing.http.response.access_control_allow_origin.header_value"
+      - Value: ""
+        Key: "routing.http.response.content_security_policy.header_value"
+      - Value: ""
+        Key: "routing.http.request.x_amzn_mtls_clientcert_leaf.header_name"
+      - Value: ""
+        Key: "routing.http.request.x_amzn_tls_version.header_name"
+      - Value: "true"
+        Key: "routing.http.response.server.enabled"
+      - Value: ""
+        Key: "routing.http.response.access_control_allow_headers.header_value"
+      - Value: ""
+        Key: "routing.http.response.x_frame_options.header_value"
+      - Value: ""
+        Key: "routing.http.response.access_control_allow_methods.header_value"
+      - Value: ""
+        Key: "routing.http.request.x_amzn_mtls_clientcert_issuer.header_name"
+      - Value: ""
+        Key: "routing.http.request.x_amzn_mtls_clientcert.header_name"
+      - Value: ""
+        Key: "routing.http.request.x_amzn_mtls_clientcert_validity.header_name"
+      - Value: ""
+        Key: "routing.http.response.access_control_allow_credentials.header_value"
+      - Value: ""
+        Key: "routing.http.request.x_amzn_mtls_clientcert_subject.header_name"
+      - Value: ""
+        Key: "routing.http.response.x_content_type_options.header_value"
+      - Value: ""
+        Key: "routing.http.response.access_control_expose_headers.header_value"
+      - Value: ""
+        Key: "routing.http.response.strict_transport_security.header_value"
+      - Value: ""
+        Key: "routing.http.response.access_control_max_age.header_value"
+      SslPolicy: "ELBSecurityPolicy-TLS13-1-2-Ext1-PQ-2025-09"
+      LoadBalancerArn: "arn:aws:elasticloadbalancing:eu-north-1:072160582391:loadbalancer/app/ecs-express-gateway-alb-6b783833/b1baf300de25ae67"
+      DefaultActions:
+      - FixedResponseConfig:
+          ContentType: "text/plain"
+          StatusCode: "404"
+          MessageBody: "Not Found"
+        Type: "fixed-response"
+      Port: 443
+      Certificates:
+      - CertificateArn: "arn:aws:acm:eu-north-1:072160582391:certificate/aade212e-8ca5-44dd-82ad-e9b078573462"
+      Protocol: "HTTPS"
+      Tags:
+      - Value: "true"
+        Key: "AmazonECSManaged"
+  LogsLogStreamEcsMain5d79ce212bd643e3ae62c44e35df8083:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Logs::LogStream"
+    DeletionPolicy: "Retain"
+    Properties:
+      LogStreamName: "ecs/Main/5d79ce212bd643e3ae62c44e35df8083"
+      LogGroupName: "/aws/ecs/default/gaming-shop-backend-fc59"
+  EC2VPCCidrBlock:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::EC2::VPCCidrBlock"
+    DeletionPolicy: "Retain"
+    Properties:
+      VpcId: "vpc-03600427402e76b5a"
+      CidrBlock: "172.31.0.0/16"
+  EC2VPCDHCPOptionsAssociation:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::EC2::VPCDHCPOptionsAssociation"
+    DeletionPolicy: "Retain"
+    Properties:
+      VpcId: "vpc-03600427402e76b5a"
+      DhcpOptionsId: "dopt-0ca58df6bf1d73e46"
+  EC2SecurityGroupXB:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::EC2::SecurityGroup"
+    DeletionPolicy: "Retain"
+    Properties:
+      GroupDescription: "Created by RDS management console"
+      GroupName: "gaming-shop-db-sg"
+      VpcId: "vpc-03600427402e76b5a"
+      SecurityGroupIngress:
+      - CidrIp: "128.77.15.19/32"
+        IpProtocol: "tcp"
+        FromPort: 5432
+        ToPort: 5432
+      - IpProtocol: "tcp"
+        FromPort: 5432
+        SourceSecurityGroupId: "sg-0f74239babf5e8e55"
+        ToPort: 5432
+        SourceSecurityGroupOwnerId: "072160582391"
+      - IpProtocol: "tcp"
+        FromPort: 5432
+        SourceSecurityGroupId: "sg-082e68d948cdc1125"
+        ToPort: 5432
+        SourceSecurityGroupOwnerId: "072160582391"
+      SecurityGroupEgress:
+      - CidrIp: "0.0.0.0/0"
+        IpProtocol: "-1"
+        FromPort: -1
+        ToPort: -1
+  EC2NetworkInterface:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::EC2::NetworkInterface"
+    DeletionPolicy: "Retain"
+    Properties:
+      SourceDestCheck: true
+      InterfaceType: "interface"
+      Description: ""
+      PrivateIpAddress: "172.31.13.118"
+      SecondaryPrivateIpAddressCount: 0
+      Ipv6PrefixCount: 0
+      Ipv4Prefixes: []
+      Ipv4PrefixCount: 0
+      GroupSet:
+      - "sg-082e68d948cdc1125"
+      Ipv6Prefixes: []
+      SubnetId: "subnet-067a180977d1405e2"
+      Tags: []
+  RDSDBSubnetGroupDefaultvpc03600427402e76b5a:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::RDS::DBSubnetGroup"
+    DeletionPolicy: "Retain"
+    Properties:
+      DBSubnetGroupDescription: "Created from the RDS Management Console"
+      SubnetIds:
+      - "subnet-067a180977d1405e2"
+      - "subnet-091dd34ddb467c54d"
+      - "subnet-032063654a72610e1"
+      DBSubnetGroupName: "default-vpc-03600427402e76b5a"
+  LogsLogStreamEcsMain77a5c3a0674e479da8609158e9ae4b4a:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Logs::LogStream"
+    DeletionPolicy: "Retain"
+    Properties:
+      LogStreamName: "ecs/Main/77a5c3a0674e479da8609158e9ae4b4a"
+      LogGroupName: "/aws/ecs/default/gaming-shop-backend-fc59"
+  EC2EIP13500203:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::EC2::EIP"
+    DeletionPolicy: "Retain"
+    Properties:
+      PublicIpv4Pool: "amazon"
+      Domain: "vpc"
+      Tags: []
+      NetworkBorderGroup: "eu-north-1"
+  EC2SecurityGroup:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::EC2::SecurityGroup"
+    DeletionPolicy: "Retain"
+    Properties:
+      GroupDescription: "default VPC security group"
+      GroupName: "default"
+      VpcId: "vpc-03600427402e76b5a"
+      SecurityGroupIngress:
+      - IpProtocol: "-1"
+        FromPort: -1
+        SourceSecurityGroupId: "sg-047273702a1db089f"
+        ToPort: -1
+        SourceSecurityGroupOwnerId: "072160582391"
+      SecurityGroupEgress:
+      - CidrIp: "0.0.0.0/0"
+        IpProtocol: "-1"
+        FromPort: -1
+        ToPort: -1
+  IAMRoleAWSServiceRoleForResourceExplorer:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/aws-service-role/resource-explorer-2.amazonaws.com/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/aws-service-role/AWSResourceExplorerServiceRolePolicy"
+      MaxSessionDuration: 3600
+      RoleName: "AWSServiceRoleForResourceExplorer"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "resource-explorer-2.amazonaws.com"
+  IAMRoleAWSServiceRoleForECS:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/aws-service-role/ecs.amazonaws.com/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/aws-service-role/AmazonECSServiceRolePolicy"
+      MaxSessionDuration: 3600
+      RoleName: "AWSServiceRoleForECS"
+      Description: "Policy to enable Amazon ECS to manage your EC2 instances and related\
+        \ resources."
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "ecs.amazonaws.com"
+  LogsLogGroupRDSOSMetrics:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Logs::LogGroup"
+    DeletionPolicy: "Retain"
+    Properties:
+      FieldIndexPolicies: []
+      RetentionInDays: 30
+      BearerTokenAuthenticationEnabled: false
+      LogGroupClass: "STANDARD"
+      LogGroupName: "RDSOSMetrics"
+      DeletionProtectionEnabled: false
+      DataProtectionPolicy: {}
+  ECSTaskDefinitionTaskdefinitiondefaultgamingshopbackend3:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ECS::TaskDefinition"
+    DeletionPolicy: "Retain"
+    Properties:
+      InferenceAccelerators: []
+      Memory: "2048"
+      PlacementConstraints: []
+      Cpu: "1024"
+      RequiresCompatibilities:
+      - "FARGATE"
+      NetworkMode: "awsvpc"
+      EnableFaultInjection: false
+      ExecutionRoleArn: "arn:aws:iam::072160582391:role/service-role/ecsTaskExecutionRole"
+      RuntimePlatform:
+        OperatingSystemFamily: "LINUX"
+        CpuArchitecture: "X86_64"
+      Volumes: []
+      ContainerDefinitions:
+      - Secrets: []
+        VolumesFrom: []
+        Cpu: 1024
+        EntryPoint: []
+        DnsServers: []
+        Image: "072160582391.dkr.ecr.eu-north-1.amazonaws.com/gaming-shop-backend@sha256:1513e6ec2e0ba75bf21d7f2fe250d0dd2275b13bcda0b23867078d8a52ff5524"
+        Essential: true
+        LogConfiguration:
+          SecretOptions: []
+          Options:
+            awslogs-group: "/aws/ecs/default/gaming-shop-backend-fc59"
+            awslogs-region: "eu-north-1"
+            awslogs-stream-prefix: "ecs"
+          LogDriver: "awslogs"
+        ResourceRequirements: []
+        EnvironmentFiles: []
+        Name: "Main"
+        DockerSecurityOptions: []
+        SystemControls: []
+        DnsSearchDomains: []
+        CredentialSpecs: []
+        Ulimits: []
+        MemoryReservation: 2048
+        ExtraHosts: []
+        MountPoints: []
+        DependsOn: []
+        DockerLabels: {}
+        PortMappings:
+        - ContainerPort: 8000
+          Protocol: "tcp"
+          HostPort: 8000
+          Name: "main-8000-tcp"
+        Command: []
+        Environment:
+        - Value: "postgresql+psycopg2://postgres:GamingShop2026!@gaming-shop-db1.c98maisa8prd.eu-north-1.rds.amazonaws.com:5432/gaming_shop"
+          Name: "DATABASE_URL"
+        Links: []
+      Family: "default-gaming-shop-backend"
+      Tags: []
+  ElasticLoadBalancingV2ListenerRuleListenerruleappecsexpressgatewayalb6b783833b1baf300de25ae67295813a5e8078ba50000613104ce24bd:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ElasticLoadBalancingV2::ListenerRule"
+    DeletionPolicy: "Retain"
+    Properties:
+      ListenerArn: "arn:aws:elasticloadbalancing:eu-north-1:072160582391:listener/app/ecs-express-gateway-alb-6b783833/b1baf300de25ae67/295813a5e8078ba5"
+      Actions:
+      - Type: "forward"
+        ForwardConfig:
+          TargetGroupStickinessConfig:
+            Enabled: false
+          TargetGroups:
+          - TargetGroupArn: "arn:aws:elasticloadbalancing:eu-north-1:072160582391:targetgroup/ecs-gateway-tg-f54dd4bbc1b92ea47/01d855cdf79e4956"
+            Weight: 0
+          - TargetGroupArn: "arn:aws:elasticloadbalancing:eu-north-1:072160582391:targetgroup/ecs-gateway-tg-7786a65ad95699c6e/655393ca1f42b4e7"
+            Weight: 100
+      Priority: 1
+      Conditions:
+      - Values:
+        - "ga-886f897c4ed24663bfebf3d8e49ff499.ecs.eu-north-1.on.aws"
+        HostHeaderConfig:
+          Values:
+          - "ga-886f897c4ed24663bfebf3d8e49ff499.ecs.eu-north-1.on.aws"
+        Field: "host-header"
+      Tags:
+      - Value: "true"
+        Key: "AmazonECSManaged"
+      Transforms: []
+  ECSTaskDefinitionTaskdefinitiondefaultgamingshopbackend4:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ECS::TaskDefinition"
+    DeletionPolicy: "Retain"
+    Properties:
+      InferenceAccelerators: []
+      Memory: "2048"
+      PlacementConstraints: []
+      Cpu: "1024"
+      RequiresCompatibilities:
+      - "FARGATE"
+      NetworkMode: "awsvpc"
+      EnableFaultInjection: false
+      ExecutionRoleArn: "arn:aws:iam::072160582391:role/service-role/ecsTaskExecutionRole"
+      RuntimePlatform:
+        OperatingSystemFamily: "LINUX"
+        CpuArchitecture: "X86_64"
+      Volumes: []
+      ContainerDefinitions:
+      - Secrets: []
+        Memory: 2048
+        VolumesFrom: []
+        Cpu: 1024
+        EntryPoint: []
+        DnsServers: []
+        Image: "072160582391.dkr.ecr.eu-north-1.amazonaws.com/gaming-shop-backend@sha256:1513e6ec2e0ba75bf21d7f2fe250d0dd2275b13bcda0b23867078d8a52ff5524"
+        Essential: true
+        LogConfiguration:
+          SecretOptions: []
+          Options:
+            awslogs-group: "/aws/ecs/default/gaming-shop-backend-fc59"
+            awslogs-region: "eu-north-1"
+            awslogs-stream-prefix: "ecs"
+          LogDriver: "awslogs"
+        ResourceRequirements: []
+        EnvironmentFiles: []
+        Name: "Main"
+        DockerSecurityOptions: []
+        SystemControls: []
+        DnsSearchDomains: []
+        CredentialSpecs: []
+        Ulimits: []
+        MemoryReservation: 2048
+        ExtraHosts: []
+        MountPoints: []
+        DependsOn: []
+        DockerLabels: {}
+        PortMappings:
+        - ContainerPort: 8000
+          Protocol: "tcp"
+          HostPort: 8000
+          Name: "main-8000-tcp"
+        Command: []
+        Environment:
+        - Value: "postgresql+psycopg2://postgres:GamingShop2026!@gaming-shop-db1.c98maisa8prd.eu-north-1.rds.amazonaws.com:5432/gaming_shop"
+          Name: "DATABASE_URL"
+        Links: []
+      Family: "default-gaming-shop-backend"
+      Tags: []
+  ECSTaskDefinitionTaskdefinitiondefaultgamingshopbackend5:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ECS::TaskDefinition"
+    DeletionPolicy: "Retain"
+    Properties:
+      InferenceAccelerators: []
+      Memory: "2048"
+      PlacementConstraints: []
+      Cpu: "1024"
+      RequiresCompatibilities:
+      - "FARGATE"
+      NetworkMode: "awsvpc"
+      EnableFaultInjection: false
+      ExecutionRoleArn: "arn:aws:iam::072160582391:role/service-role/ecsTaskExecutionRole"
+      RuntimePlatform:
+        OperatingSystemFamily: "LINUX"
+        CpuArchitecture: "X86_64"
+      Volumes: []
+      ContainerDefinitions:
+      - Secrets: []
+        Memory: 2048
+        VolumesFrom: []
+        Cpu: 1024
+        EntryPoint: []
+        DnsServers: []
+        Image: "072160582391.dkr.ecr.eu-north-1.amazonaws.com/gaming-shop-backend@sha256:1513e6ec2e0ba75bf21d7f2fe250d0dd2275b13bcda0b23867078d8a52ff5524"
+        Essential: true
+        LogConfiguration:
+          SecretOptions: []
+          Options:
+            awslogs-group: "/aws/ecs/default/gaming-shop-backend-fc59"
+            awslogs-region: "eu-north-1"
+            awslogs-stream-prefix: "ecs"
+          LogDriver: "awslogs"
+        ResourceRequirements: []
+        EnvironmentFiles: []
+        Name: "Main"
+        DockerSecurityOptions: []
+        SystemControls: []
+        DnsSearchDomains: []
+        CredentialSpecs: []
+        Ulimits: []
+        MemoryReservation: 2048
+        ExtraHosts: []
+        MountPoints: []
+        DependsOn: []
+        DockerLabels: {}
+        PortMappings:
+        - ContainerPort: 8000
+          Protocol: "tcp"
+          HostPort: 8000
+          Name: "main-8000-tcp"
+        Command: []
+        Environment:
+        - Value: "postgresql+psycopg2://postgres:GamingShop2026!@gaming-shop-db1.c98maisa8prd.eu-north-1.rds.amazonaws.com:5432/gaming_shop"
+          Name: "DATABASE_URL"
+        Links: []
+      Family: "default-gaming-shop-backend"
+      Tags: []
+  ECSServiceDefault:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ECS::Service"
+    DeletionPolicy: "Retain"
+    Properties:
+      HealthCheckGracePeriodSeconds: 0
+      EnableECSManagedTags: true
+      EnableExecuteCommand: false
+      PlacementConstraints: []
+      PropagateTags: "SERVICE"
+      Cluster: "default"
+      DesiredCount: 1
+      PlacementStrategies: []
+      DeploymentController:
+        Type: "ECS"
+      AvailabilityZoneRebalancing: "ENABLED"
+      SchedulingStrategy: "REPLICA"
+      ServiceName: "gaming-shop-backend"
+      DeploymentConfiguration:
+        CanaryConfiguration:
+          CanaryPercent: 5
+          CanaryBakeTimeInMinutes: 3
+        BakeTimeInMinutes: 3
+        Alarms:
+          AlarmNames:
+          - "default/gaming-shop-backend/RollbackAlarm"
+          Enable: true
+          Rollback: true
+        Strategy: "CANARY"
+        DeploymentCircuitBreaker:
+          Enable: true
+          ResetOnHealthyTask: true
+          Rollback: true
+          ThresholdConfiguration:
+            Value: 50
+            Type: "BOUNDED_PERCENT"
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+  ECSTaskDefinitionTaskdefinitiondefaultgamingshopbackend6:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ECS::TaskDefinition"
+    DeletionPolicy: "Retain"
+    Properties:
+      InferenceAccelerators: []
+      Memory: "2048"
+      PlacementConstraints: []
+      Cpu: "1024"
+      RequiresCompatibilities:
+      - "FARGATE"
+      NetworkMode: "awsvpc"
+      EnableFaultInjection: false
+      ExecutionRoleArn: "arn:aws:iam::072160582391:role/service-role/ecsTaskExecutionRole"
+      RuntimePlatform:
+        OperatingSystemFamily: "LINUX"
+        CpuArchitecture: "X86_64"
+      Volumes: []
+      ContainerDefinitions:
+      - Secrets: []
+        Memory: 2048
+        VolumesFrom: []
+        Cpu: 1024
+        EntryPoint: []
+        DnsServers: []
+        Image: "072160582391.dkr.ecr.eu-north-1.amazonaws.com/gaming-shop-backend@sha256:1513e6ec2e0ba75bf21d7f2fe250d0dd2275b13bcda0b23867078d8a52ff5524"
+        Essential: true
+        LogConfiguration:
+          SecretOptions: []
+          Options:
+            awslogs-group: "/aws/ecs/default/gaming-shop-backend-fc59"
+            awslogs-region: "eu-north-1"
+            awslogs-stream-prefix: "ecs"
+          LogDriver: "awslogs"
+        ResourceRequirements: []
+        EnvironmentFiles: []
+        Name: "Main"
+        DockerSecurityOptions: []
+        SystemControls: []
+        DnsSearchDomains: []
+        CredentialSpecs: []
+        Ulimits: []
+        MemoryReservation: 2048
+        ExtraHosts: []
+        MountPoints: []
+        DependsOn: []
+        DockerLabels: {}
+        PortMappings:
+        - ContainerPort: 8000
+          Protocol: "tcp"
+          HostPort: 8000
+          Name: "main-8000-tcp"
+        Command: []
+        Environment:
+        - Value: "postgresql+psycopg2://postgres:GamingShop2026!@gaming-shop-db1.c98maisa8prd.eu-north-1.rds.amazonaws.com:5432/gaming_shop"
+          Name: "DATABASE_URL"
+        Links: []
+      Family: "default-gaming-shop-backend"
+      Tags: []
+  ECSTaskDefinitionTaskdefinitiondefaultgamingshopbackend7:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ECS::TaskDefinition"
+    DeletionPolicy: "Retain"
+    Properties:
+      InferenceAccelerators: []
+      Memory: "2048"
+      PlacementConstraints: []
+      Cpu: "1024"
+      RequiresCompatibilities:
+      - "FARGATE"
+      NetworkMode: "awsvpc"
+      EnableFaultInjection: false
+      ExecutionRoleArn: "arn:aws:iam::072160582391:role/service-role/ecsTaskExecutionRole"
+      RuntimePlatform:
+        OperatingSystemFamily: "LINUX"
+        CpuArchitecture: "X86_64"
+      Volumes: []
+      ContainerDefinitions:
+      - Secrets: []
+        Memory: 2048
+        VolumesFrom: []
+        Cpu: 1024
+        EntryPoint: []
+        DnsServers: []
+        Image: "072160582391.dkr.ecr.eu-north-1.amazonaws.com/gaming-shop-backend@sha256:dbe1b3b0d12e1eba1fb22e1137a24f7c9054d0dd329e1463faa6a6efffff4ab1"
+        Essential: true
+        LogConfiguration:
+          SecretOptions: []
+          Options:
+            awslogs-group: "/aws/ecs/default/gaming-shop-backend-fc59"
+            awslogs-region: "eu-north-1"
+            awslogs-stream-prefix: "ecs"
+          LogDriver: "awslogs"
+        ResourceRequirements: []
+        EnvironmentFiles: []
+        Name: "Main"
+        DockerSecurityOptions: []
+        SystemControls: []
+        DnsSearchDomains: []
+        CredentialSpecs: []
+        Ulimits: []
+        MemoryReservation: 2048
+        ExtraHosts: []
+        MountPoints: []
+        DependsOn: []
+        DockerLabels: {}
+        PortMappings:
+        - ContainerPort: 8000
+          Protocol: "tcp"
+          HostPort: 8000
+          Name: "main-8000-tcp"
+        Command: []
+        Environment:
+        - Value: "postgresql+psycopg2://postgres:GamingShop2026!@gaming-shop-db1.c98maisa8prd.eu-north-1.rds.amazonaws.com:5432/gaming_shop"
+          Name: "DATABASE_URL"
+        Links: []
+      Family: "default-gaming-shop-backend"
+      Tags: []
+  LogsLogStreamEcsMain5a7559b77ef241fbb6cc7c2704aaed48:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Logs::LogStream"
+    DeletionPolicy: "Retain"
+    Properties:
+      LogStreamName: "ecs/Main/5a7559b77ef241fbb6cc7c2704aaed48"
+      LogGroupName: "/aws/ecs/default/gaming-shop-backend-fc59"
+  ECSTaskDefinitionTaskdefinitiondefaultgamingshopbackend8:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ECS::TaskDefinition"
+    DeletionPolicy: "Retain"
+    Properties:
+      InferenceAccelerators: []
+      Memory: "2048"
+      PlacementConstraints: []
+      Cpu: "1024"
+      RequiresCompatibilities:
+      - "FARGATE"
+      NetworkMode: "awsvpc"
+      EnableFaultInjection: false
+      ExecutionRoleArn: "arn:aws:iam::072160582391:role/service-role/ecsTaskExecutionRole"
+      RuntimePlatform:
+        OperatingSystemFamily: "LINUX"
+        CpuArchitecture: "X86_64"
+      Volumes: []
+      ContainerDefinitions:
+      - Secrets: []
+        Memory: 2048
+        VolumesFrom: []
+        Cpu: 1024
+        EntryPoint: []
+        DnsServers: []
+        Image: "072160582391.dkr.ecr.eu-north-1.amazonaws.com/gaming-shop-backend:8db03a760be0861e32926ee7ebceaf2dd13b037c"
+        Essential: true
+        LogConfiguration:
+          SecretOptions: []
+          Options:
+            awslogs-group: "/aws/ecs/default/gaming-shop-backend-fc59"
+            awslogs-region: "eu-north-1"
+            awslogs-stream-prefix: "ecs"
+          LogDriver: "awslogs"
+        ResourceRequirements: []
+        EnvironmentFiles: []
+        Name: "Main"
+        DockerSecurityOptions: []
+        SystemControls: []
+        DnsSearchDomains: []
+        CredentialSpecs: []
+        Ulimits: []
+        MemoryReservation: 2048
+        ExtraHosts: []
+        MountPoints: []
+        DependsOn: []
+        DockerLabels: {}
+        PortMappings:
+        - ContainerPort: 8000
+          Protocol: "tcp"
+          HostPort: 8000
+          Name: "main-8000-tcp"
+        Command: []
+        Environment:
+        - Value: "postgresql+psycopg2://postgres:GamingShop2026!@gaming-shop-db1.c98maisa8prd.eu-north-1.rds.amazonaws.com:5432/gaming_shop"
+          Name: "DATABASE_URL"
+        Links: []
+      Family: "default-gaming-shop-backend"
+      Tags: []
+  EC2EIP1619258202:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::EC2::EIP"
+    DeletionPolicy: "Retain"
+    Properties:
+      PublicIpv4Pool: "amazon"
+      Domain: "vpc"
+      Tags: []
+      NetworkBorderGroup: "eu-north-1"
+  ECSTaskDefinitionTaskdefinitiondefaultgamingshopbackend9:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ECS::TaskDefinition"
+    DeletionPolicy: "Retain"
+    Properties:
+      InferenceAccelerators: []
+      Memory: "2048"
+      PlacementConstraints: []
+      Cpu: "1024"
+      RequiresCompatibilities:
+      - "FARGATE"
+      NetworkMode: "awsvpc"
+      EnableFaultInjection: false
+      ExecutionRoleArn: "arn:aws:iam::072160582391:role/service-role/ecsTaskExecutionRole"
+      RuntimePlatform:
+        OperatingSystemFamily: "LINUX"
+        CpuArchitecture: "X86_64"
+      Volumes: []
+      ContainerDefinitions:
+      - Secrets: []
+        Memory: 2048
+        VolumesFrom: []
+        Cpu: 1024
+        EntryPoint: []
+        DnsServers: []
+        Image: "072160582391.dkr.ecr.eu-north-1.amazonaws.com/gaming-shop-backend:c90708de7c665ce714b8ade9e57a6344385ba187"
+        Essential: true
+        LogConfiguration:
+          SecretOptions: []
+          Options:
+            awslogs-group: "/aws/ecs/default/gaming-shop-backend-fc59"
+            awslogs-region: "eu-north-1"
+            awslogs-stream-prefix: "ecs"
+          LogDriver: "awslogs"
+        ResourceRequirements: []
+        EnvironmentFiles: []
+        Name: "Main"
+        DockerSecurityOptions: []
+        SystemControls: []
+        DnsSearchDomains: []
+        CredentialSpecs: []
+        Ulimits: []
+        MemoryReservation: 2048
+        ExtraHosts: []
+        MountPoints: []
+        DependsOn: []
+        DockerLabels: {}
+        PortMappings:
+        - ContainerPort: 8000
+          Protocol: "tcp"
+          HostPort: 8000
+          Name: "main-8000-tcp"
+        Command: []
+        Environment:
+        - Value: "postgresql+psycopg2://postgres:GamingShop2026!@gaming-shop-db1.c98maisa8prd.eu-north-1.rds.amazonaws.com:5432/gaming_shop"
+          Name: "DATABASE_URL"
+        Links: []
+      Family: "default-gaming-shop-backend"
+      Tags: []
+  ElasticLoadBalancingV2LoadBalancerLoadbalancerappecsexpressgatewayalb6b783833b1baf300de25ae67:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
+    DeletionPolicy: "Retain"
+    Properties:
+      IpAddressType: "ipv4"
+      SecurityGroups:
+      - "sg-0d72b03bc024e1b8e"
+      LoadBalancerAttributes:
+      - Value: ""
+        Key: "access_logs.s3.prefix"
+      - Value: "append"
+        Key: "routing.http.xff_header_processing.mode"
+      - Value: "true"
+        Key: "routing.http2.enabled"
+      - Value: "false"
+        Key: "waf.fail_open.enabled"
+      - Value: ""
+        Key: "connection_logs.s3.bucket"
+      - Value: "false"
+        Key: "access_logs.s3.enabled"
+      - Value: "false"
+        Key: "zonal_shift.config.enabled"
+      - Value: "defensive"
+        Key: "routing.http.desync_mitigation_mode"
+      - Value: ""
+        Key: "connection_logs.s3.prefix"
+      - Value: ""
+        Key: "health_check_logs.s3.prefix"
+      - Value: "false"
+        Key: "routing.http.x_amzn_tls_version_and_cipher_suite.enabled"
+      - Value: "false"
+        Key: "routing.http.preserve_host_header.enabled"
+      - Value: "true"
+        Key: "load_balancing.cross_zone.enabled"
+      - Value: "false"
+        Key: "health_check_logs.s3.enabled"
+      - Value: ""
+        Key: "health_check_logs.s3.bucket"
+      - Value: "false"
+        Key: "routing.http.xff_client_port.enabled"
+      - Value: ""
+        Key: "access_logs.s3.bucket"
+      - Value: "false"
+        Key: "deletion_protection.enabled"
+      - Value: "3600"
+        Key: "client_keep_alive.seconds"
+      - Value: "false"
+        Key: "routing.http.drop_invalid_header_fields.enabled"
+      - Value: "false"
+        Key: "connection_logs.s3.enabled"
+      - Value: "60"
+        Key: "idle_timeout.timeout_seconds"
+      Subnets:
+      - "subnet-067a180977d1405e2"
+      - "subnet-091dd34ddb467c54d"
+      - "subnet-032063654a72610e1"
+      Type: "application"
+      Scheme: "internet-facing"
+      EnablePrefixForIpv6SourceNat: "off"
+      Tags:
+      - Value: "true"
+        Key: "AmazonECSManaged"
+      Name: "ecs-express-gateway-alb-6b783833"
+      SubnetMappings:
+      - SubnetId: "subnet-067a180977d1405e2"
+      - SubnetId: "subnet-091dd34ddb467c54d"
+      - SubnetId: "subnet-032063654a72610e1"
+  EC2SecurityGroupIx:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::EC2::SecurityGroup"
+    DeletionPolicy: "Retain"
+    Properties:
+      GroupDescription: "ECS Express Gateway security group - allows HTTP/HTTPS inbound\
+        \ with managed outbound rules"
+      GroupName: "ecs-express-gateway-alb-sg-1784497529111"
+      VpcId: "vpc-03600427402e76b5a"
+      SecurityGroupIngress:
+      - CidrIp: "0.0.0.0/0"
+        IpProtocol: "tcp"
+        Description: "HTTP access from anywhere (IPv4)"
+        FromPort: 80
+        ToPort: 80
+      - CidrIpv6: "::/0"
+        IpProtocol: "tcp"
+        Description: "HTTP access from anywhere (IPv6)"
+        FromPort: 80
+        ToPort: 80
+      - CidrIp: "0.0.0.0/0"
+        IpProtocol: "tcp"
+        Description: "HTTPS access from anywhere (IPv4)"
+        FromPort: 443
+        ToPort: 443
+      - CidrIpv6: "::/0"
+        IpProtocol: "tcp"
+        Description: "HTTPS access from anywhere (IPv6)"
+        FromPort: 443
+        ToPort: 443
+      SecurityGroupEgress:
+      - IpProtocol: "-1"
+        DestinationSecurityGroupId: "sg-0d72b03bc024e1b8e"
+        Description: "Placeholder rule to reserve capacity"
+        FromPort: -1
+        ToPort: -1
+      - IpProtocol: "tcp"
+        DestinationSecurityGroupId: "sg-0f74239babf5e8e55"
+        Description: "Egress Rule to ECS Service"
+        FromPort: 8000
+        ToPort: 8000
+      Tags:
+      - Value: "true"
+        Key: "AmazonECSManaged"
+  LogsLogStreamDb3GWFLHMDWWRZIMO6GIHPHSQSTU:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Logs::LogStream"
+    DeletionPolicy: "Retain"
+    Properties:
+      LogStreamName: "db-3GWFLHMDWWRZIMO6GIHPHSQSTU"
+      LogGroupName: "RDSOSMetrics"
+  LogsLogStreamEcsMain01777eefd9b440c9b251aaddc20dfe07:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Logs::LogStream"
+    DeletionPolicy: "Retain"
+    Properties:
+      LogStreamName: "ecs/Main/01777eefd9b440c9b251aaddc20dfe07"
+      LogGroupName: "/aws/ecs/default/gaming-shop-backend-fc59"
+  ECRRepositoryGamingshopbackend:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ECR::Repository"
+    DeletionPolicy: "Retain"
+    Properties:
+      ImageScanningConfiguration:
+        ScanOnPush: false
+      RepositoryName: "gaming-shop-backend"
+      EncryptionConfiguration:
+        EncryptionType: "AES256"
+      Tags: []
+      ImageTagMutability: "MUTABLE"
+  EC2Volume:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::EC2::Volume"
+    DeletionPolicy: "Retain"
+    Properties:
+      MultiAttachEnabled: false
+      SnapshotId: "snap-03706388e10b0deab"
+      VolumeType: "gp3"
+      Encrypted: false
+      Size: 8
+      AutoEnableIO: true
+      AvailabilityZoneId: "eun1-az3"
+      AvailabilityZone: "eu-north-1c"
+      Throughput: 125
+      Iops: 3000
+      Tags: []
+  ECSTaskDefinitionTaskdefinitiondefaultgamingshopbackend1:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ECS::TaskDefinition"
+    DeletionPolicy: "Retain"
+    Properties:
+      InferenceAccelerators: []
+      Memory: "2048"
+      PlacementConstraints: []
+      Cpu: "1024"
+      RequiresCompatibilities:
+      - "FARGATE"
+      NetworkMode: "awsvpc"
+      EnableFaultInjection: false
+      ExecutionRoleArn: "arn:aws:iam::072160582391:role/service-role/ecsTaskExecutionRole"
+      RuntimePlatform:
+        OperatingSystemFamily: "LINUX"
+        CpuArchitecture: "X86_64"
+      Volumes: []
+      ContainerDefinitions:
+      - Secrets: []
+        VolumesFrom: []
+        Cpu: 1024
+        EntryPoint: []
+        DnsServers: []
+        Image: "072160582391.dkr.ecr.eu-north-1.amazonaws.com/gaming-shop-backend@sha256:1513e6ec2e0ba75bf21d7f2fe250d0dd2275b13bcda0b23867078d8a52ff5524"
+        Essential: true
+        LogConfiguration:
+          SecretOptions: []
+          Options:
+            awslogs-group: "/aws/ecs/default/gaming-shop-backend-c640"
+            awslogs-region: "eu-north-1"
+            awslogs-stream-prefix: "ecs"
+          LogDriver: "awslogs"
+        ResourceRequirements: []
+        EnvironmentFiles: []
+        Name: "Main"
+        DockerSecurityOptions: []
+        SystemControls: []
+        DnsSearchDomains: []
+        CredentialSpecs: []
+        Ulimits: []
+        MemoryReservation: 2048
+        ExtraHosts: []
+        MountPoints: []
+        DependsOn: []
+        DockerLabels: {}
+        PortMappings:
+        - ContainerPort: 8000
+          Protocol: "tcp"
+          HostPort: 8000
+          Name: "main-8000-tcp"
+        Command: []
+        Environment:
+        - Value: "postgresql+psycopg2://postgres:GamingShop2026!@gaming-shop-db1.c98maisa8prd.eu-north-1.rds.amazonaws.com:5432/gaming_shop"
+          Name: "DATABASE_URL"
+        Links: []
+      Family: "default-gaming-shop-backend"
+      Tags: []
+  ECSTaskDefinitionTaskdefinitiondefaultgamingshopbackend2:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ECS::TaskDefinition"
+    DeletionPolicy: "Retain"
+    Properties:
+      InferenceAccelerators: []
+      Memory: "2048"
+      PlacementConstraints: []
+      Cpu: "1024"
+      RequiresCompatibilities:
+      - "FARGATE"
+      NetworkMode: "awsvpc"
+      EnableFaultInjection: false
+      ExecutionRoleArn: "arn:aws:iam::072160582391:role/service-role/ecsTaskExecutionRole"
+      RuntimePlatform:
+        OperatingSystemFamily: "LINUX"
+        CpuArchitecture: "X86_64"
+      Volumes: []
+      ContainerDefinitions:
+      - Secrets: []
+        VolumesFrom: []
+        Cpu: 1024
+        EntryPoint: []
+        DnsServers: []
+        Image: "072160582391.dkr.ecr.eu-north-1.amazonaws.com/gaming-shop-backend@sha256:1513e6ec2e0ba75bf21d7f2fe250d0dd2275b13bcda0b23867078d8a52ff5524"
+        Essential: true
+        LogConfiguration:
+          SecretOptions: []
+          Options:
+            awslogs-group: "/aws/ecs/default/gaming-shop-backend-394a"
+            awslogs-region: "eu-north-1"
+            awslogs-stream-prefix: "ecs"
+          LogDriver: "awslogs"
+        ResourceRequirements: []
+        EnvironmentFiles: []
+        Name: "Main"
+        DockerSecurityOptions: []
+        SystemControls: []
+        DnsSearchDomains: []
+        CredentialSpecs: []
+        Ulimits: []
+        MemoryReservation: 2048
+        ExtraHosts: []
+        MountPoints: []
+        DependsOn: []
+        DockerLabels: {}
+        PortMappings:
+        - ContainerPort: 8000
+          Protocol: "tcp"
+          HostPort: 8000
+          Name: "main-8000-tcp"
+        Command: []
+        Environment:
+        - Value: "postgresql+psycopg2://postgres:GamingShop2026!@gaming-shop-db1.c98maisa8prd.eu-north-1.rds.amazonaws.com:5432/gaming_shop"
+          Name: "DATABASE_URL"
+        Links: []
+      Family: "default-gaming-shop-backend"
+      Tags: []
+  IAMInstanceProfileGamingshopec2ssmrole:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::InstanceProfile"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/"
+      Roles:
+      - "gaming-shop-ec2-ssm-role"
+      InstanceProfileName: "gaming-shop-ec2-ssm-role"
+  EC2VPC:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::EC2::VPC"
+    DeletionPolicy: "Retain"
+    Properties:
+      CidrBlock: "172.31.0.0/16"
+      EnableDnsSupport: true
+      InstanceTenancy: "default"
+      EnableDnsHostnames: true
+      Tags: []
+  EC2EIP512110332:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::EC2::EIP"
+    DeletionPolicy: "Retain"
+    Properties:
+      PublicIpv4Pool: "amazon"
+      Domain: "vpc"
+      Tags: []
+      NetworkBorderGroup: "eu-north-1"
+  EC2RouteTable:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::EC2::RouteTable"
+    DeletionPolicy: "Retain"
+    Properties:
+      VpcId: "vpc-03600427402e76b5a"
+  LogsLogStreamEcsMain4378d8ff175f4a76950c8345f8d325c1:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Logs::LogStream"
+    DeletionPolicy: "Retain"
+    Properties:
+      LogStreamName: "ecs/Main/4378d8ff175f4a76950c8345f8d325c1"
+      LogGroupName: "/aws/ecs/default/gaming-shop-backend-fc59"
+  IAMRoleAWSServiceRoleForRDS:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/aws-service-role/rds.amazonaws.com/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/aws-service-role/AmazonRDSServiceRolePolicy"
+      MaxSessionDuration: 3600
+      RoleName: "AWSServiceRoleForRDS"
+      Description: "Allows Amazon RDS to manage AWS resources on your behalf"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "rds.amazonaws.com"
+  IAMRoleGamingshopec2ssmrole:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+      - "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      MaxSessionDuration: 3600
+      RoleName: "gaming-shop-ec2-ssm-role"
+      Description: ""
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "ec2.amazonaws.com"
+  IAMRoleAWSServiceRoleForSupport:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/aws-service-role/support.amazonaws.com/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/aws-service-role/AWSSupportServiceRolePolicy"
+      MaxSessionDuration: 3600
+      RoleName: "AWSServiceRoleForSupport"
+      Description: "Enables resource access for AWS to provide billing, administrative\
+        \ and support services"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "support.amazonaws.com"
+  LogsLogStreamEcsMain4b8b7a99ddbf4a5f8ae4a563817c3c85:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Logs::LogStream"
+    DeletionPolicy: "Retain"
+    Properties:
+      LogStreamName: "ecs/Main/4b8b7a99ddbf4a5f8ae4a563817c3c85"
+      LogGroupName: "/aws/ecs/default/gaming-shop-backend-fc59"
