@@ -1,0 +1,67 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: AWS Amplify frontend for Gaming Shop.
+
+Parameters:
+  ProjectName:
+    Type: String
+    Default: Online_Shop
+  GitHubRepository:
+    Type: String
+    Default: https://github.com/Nana-2237/Online_Shop
+  GitHubAccessToken:
+    Type: String
+    NoEcho: true
+  BranchName:
+    Type: String
+    Default: main
+  BackendUrl:
+    Type: String
+
+Resources:
+  AmplifyApp:
+    Type: AWS::Amplify::App
+    Properties:
+      Name: !Ref ProjectName
+      Repository: !Ref GitHubRepository
+      AccessToken: !Ref GitHubAccessToken
+      Platform: WEB
+      EnvironmentVariables:
+        - Name: VITE_API_URL
+          Value: !Ref BackendUrl
+      CustomRules:
+        - Source: "/<*>"
+          Target: "/index.html"
+          Status: "404-200"
+      BuildSpec: |
+        version: 1
+        frontend:
+          phases:
+            preBuild:
+              commands:
+                - cd frontend
+                - npm ci
+            build:
+              commands:
+                - npm run build
+          artifacts:
+            baseDirectory: frontend/dist
+            files:
+              - "**/*"
+          cache:
+            paths:
+              - frontend/node_modules/**/*
+
+  AmplifyBranch:
+    Type: AWS::Amplify::Branch
+    Properties:
+      AppId: !GetAtt AmplifyApp.AppId
+      BranchName: !Ref BranchName
+      EnableAutoBuild: true
+      Stage: PRODUCTION
+      Framework: Web
+
+Outputs:
+  AmplifyAppId:
+    Value: !GetAtt AmplifyApp.AppId
+  AmplifyDefaultDomain:
+    Value: !GetAtt AmplifyApp.DefaultDomain

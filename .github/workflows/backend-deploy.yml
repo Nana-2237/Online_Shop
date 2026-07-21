@@ -15,9 +15,9 @@ permissions:
 env:
   AWS_REGION: eu-north-1
   ECR_REPOSITORY: gaming-shop-backend
-  ECS_CLUSTER: default
+  ECS_CLUSTER: gaming-shop-cluster
   ECS_SERVICE: gaming-shop-backend
-  ECS_TASK_DEFINITION: default-gaming-shop-backend
+  ECS_TASK_DEFINITION: gaming-shop-backend
   CONTAINER_NAME: Main
 
 jobs:

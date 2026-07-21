@@ -23,7 +23,7 @@ export default function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="text-xl font-bold text-blue-600">
-              Gaming Shop
+              Gaming Shopz
             </Link>
           </div>
           <div className="flex items-center space-x-6">
