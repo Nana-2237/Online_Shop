@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
+import { trackClick } from '../tracking.js'
 
 export default function Register() {
   const [form, setForm] = useState({ email: '', full_name: '', password: '' })
   const [error, setError] = useState('')
-  const { register } = useAuth()
+  const { register, token } = useAuth()
   const navigate = useNavigate()
 
   const handleChange = (e) => {
@@ -14,6 +15,7 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    trackClick(token, 'register_submit', 'Register')
     setError('')
     try {
       await register(form)
@@ -69,7 +71,7 @@ export default function Register() {
         </button>
       </form>
       <p className="mt-4 text-center text-sm">
-        Already have an account? <Link to="/login" className="text-blue-600">Login</Link>
+        Already have an account? <Link to="/login" onClick={() => trackClick(token, 'register_login_link', 'Login')} className="text-blue-600">Login</Link>
       </p>
     </div>
   )

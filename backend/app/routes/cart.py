@@ -34,6 +34,9 @@ def add_cart_item(
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
 
+    if item_data.quantity <= 0:
+        raise HTTPException(status_code=400, detail="Quantity must be greater than 0")
+
     cart = get_or_create_cart(db, current_user)
 
     cart_item = (
@@ -42,8 +45,18 @@ def add_cart_item(
         .first()
     )
 
+    new_quantity = item_data.quantity
     if cart_item:
-        cart_item.quantity += item_data.quantity
+        new_quantity = cart_item.quantity + item_data.quantity
+
+    if new_quantity > product.stock:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Only {product.stock} units available for {product.name}",
+        )
+
+    if cart_item:
+        cart_item.quantity = new_quantity
     else:
         cart_item = CartItem(
             cart_id=cart.id,
@@ -101,6 +114,15 @@ def update_cart_item(
         db.delete(cart_item)
         db.commit()
         raise HTTPException(status_code=200, detail="Cart item removed")
+
+    product = db.query(Product).filter(Product.id == cart_item.product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    if item_data.quantity > product.stock:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Only {product.stock} units available for {product.name}",
+        )
 
     cart_item.quantity = item_data.quantity
     db.commit()

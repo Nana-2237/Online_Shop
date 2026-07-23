@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
 from datetime import datetime
 
@@ -127,3 +127,21 @@ class OrderResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class ClickEventCreate(BaseModel):
+    event_type: str = "button_click"
+    event_name: Optional[str] = None
+    button_id: Optional[str] = None
+    button_text: Optional[str] = None
+    page: str
+    path: str
+    session_id: Optional[str] = None
+    cart_id: Optional[int] = None
+    product_id: Optional[int] = None
+    product_name: Optional[str] = None
+    category: Optional[str] = None
+    price: Optional[float] = None
+    quantity: Optional[int] = None
+    element_id: Optional[str] = None
+    metadata: dict = Field(default_factory=dict)

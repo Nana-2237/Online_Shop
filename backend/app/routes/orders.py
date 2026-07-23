@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.auth import get_current_active_user
 from app.database import get_db
+from app.event_publisher import publish_order_created
 from app.models import Cart, CartItem, Order, OrderItem, Product, User
 from app.schemas import OrderResponse
 
@@ -26,15 +27,21 @@ def create_order(
     order_items = []
 
     for item in cart.items:
-        product = db.query(Product).filter(Product.id == item.product_id).first()
+        product = db.query(Product).filter(Product.id == item.product_id).with_for_update().first()
         if not product:
             raise HTTPException(
                 status_code=404,
                 detail=f"Product {item.product_id} not found",
             )
+        if item.quantity > product.stock:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Only {product.stock} units available for {product.name}",
+            )
 
         unit_price = product.price
         total += unit_price * item.quantity
+        product.stock -= item.quantity
         order_items.append(
             OrderItem(
                 product_id=item.product_id,
@@ -51,6 +58,8 @@ def create_order(
     )
 
     db.add(order)
+    for item in cart.items:
+        db.delete(item)
     db.commit()
     order = (
         db.query(Order)
@@ -59,10 +68,7 @@ def create_order(
         .first()
     )
 
-    if cart:
-        for item in cart.items:
-            db.delete(item)
-        db.commit()
+    publish_order_created(order)
 
     return order
 

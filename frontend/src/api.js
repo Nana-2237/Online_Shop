@@ -4,6 +4,10 @@ function authHeaders(token) {
   return { Authorization: `Bearer ${token}` }
 }
 
+function trackingHeaders(token) {
+  return token ? { ...authHeaders(token), 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' }
+}
+
 export const api = {
   auth: {
     register: (data) =>
@@ -69,6 +73,15 @@ export const api = {
       }),
     list: (token) => fetch(`${API_BASE}/orders/`, { headers: authHeaders(token) }),
     get: (token, id) => fetch(`${API_BASE}/orders/${id}`, { headers: authHeaders(token) }),
+  },
+  events: {
+    trackClick: (token, data) =>
+      fetch(`${API_BASE}/events/clicks`, {
+        method: 'POST',
+        headers: trackingHeaders(token),
+        body: JSON.stringify(data),
+        keepalive: true,
+      }),
   },
   adminUsers: {
     list: (token) => fetch(`${API_BASE}/admin/users/`, { headers: authHeaders(token) }),

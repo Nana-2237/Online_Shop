@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom'
 import { Gamepad2, Headphones, ShieldCheck, Truck } from 'lucide-react'
+import { useAuth } from '../context/AuthContext.jsx'
+import { trackClick } from '../tracking.js'
 
 export default function Home() {
+  const { token } = useAuth()
+
   return (
     <div className="space-y-12">
       <section className="overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 via-indigo-600 to-slate-900 text-white shadow-xl">
@@ -15,10 +19,10 @@ export default function Home() {
               Find gaming laptops, keyboards, mice, headsets, monitors, controllers and accessories for every player.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <Link to="/products" className="rounded-lg bg-white px-6 py-3 font-semibold text-blue-700 shadow hover:bg-blue-50">
+              <Link to="/products" onClick={() => trackClick(token, 'home_shop_products', 'Shop products')} className="rounded-lg bg-white px-6 py-3 font-semibold text-blue-700 shadow hover:bg-blue-50">
                 Shop products
               </Link>
-              <Link to="/register" className="rounded-lg border border-white/40 px-6 py-3 font-semibold text-white hover:bg-white/10">
+              <Link to="/register" onClick={() => trackClick(token, 'home_create_account', 'Create account')} className="rounded-lg border border-white/40 px-6 py-3 font-semibold text-white hover:bg-white/10">
                 Create account
               </Link>
             </div>

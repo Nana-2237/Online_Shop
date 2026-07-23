@@ -1,16 +1,18 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
+import { trackClick } from '../tracking.js'
 
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const { login } = useAuth()
+  const { login, token } = useAuth()
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    trackClick(token, 'login_submit', 'Login')
     setError('')
     try {
       await login(email, password)
@@ -53,7 +55,7 @@ export default function Login() {
         </button>
       </form>
       <p className="mt-4 text-center text-sm">
-        Don't have an account? <Link to="/register" className="text-blue-600">Register</Link>
+        Don't have an account? <Link to="/register" onClick={() => trackClick(token, 'login_register_link', 'Register')} className="text-blue-600">Register</Link>
       </p>
     </div>
   )
