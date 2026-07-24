@@ -18,14 +18,6 @@ export default function Products() {
         if (res.ok) {
           const data = await res.json()
           setProducts(data)
-          data.forEach(product => {
-            trackEvent(token, 'product_viewed', {
-              product_id: product.id,
-              product_name: product.name,
-              category: product.category,
-              price: product.price,
-            })
-          })
         } else setError('Failed to load products')
       })
       .catch(() => setError('Failed to load products'))
@@ -55,6 +47,16 @@ export default function Products() {
   const showToast = (text, type = 'success') => {
     setToast({ text, type })
     setTimeout(() => setToast(null), 2500)
+  }
+
+  const handleProductClick = (product) => {
+    trackEvent(token, 'product_viewed', {
+      product_id: product.id,
+      product_name: product.name,
+      category: product.category,
+      price: product.price,
+      element_id: `product-card-${product.id}`,
+    })
   }
 
   const addToCart = async (product) => {
@@ -120,7 +122,11 @@ export default function Products() {
           const canAdd = product.stock > 0 && quantityInCart < product.stock
 
           return (
-          <div key={product.id} className="bg-white rounded-lg shadow p-4 flex flex-col">
+          <div
+            key={product.id}
+            onClick={() => handleProductClick(product)}
+            className="bg-white rounded-lg shadow p-4 flex flex-col cursor-pointer hover:shadow-md transition-shadow"
+          >
             {product.image_url ? (
               <img src={product.image_url} alt={product.name} className="h-40 w-full object-cover rounded-md mb-4" />
             ) : (
@@ -133,7 +139,10 @@ export default function Products() {
             <div className="flex items-center justify-between mt-auto">
               <span className="text-xl font-bold text-blue-600">${product.price.toFixed(2)}</span>
               <button
-                onClick={() => addToCart(product)}
+                onClick={(event) => {
+                  event.stopPropagation()
+                  addToCart(product)
+                }}
                 disabled={!canAdd}
                 className={`px-4 py-2 rounded-md flex items-center gap-2 ${!canAdd ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
               >
